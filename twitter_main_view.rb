@@ -1,20 +1,100 @@
 require File.expand_path(File.dirname(__FILE__) + '/twitter_controller.rb')
+require File.expand_path(File.dirname(__FILE__) + '/twitter_formatter.rb')
 
-controller = TwitterController.new
+class TwitterView
+	:controller
+	
+	attr :error
+	attr :trend_list
+	attr :current_trend_twits
+	
+	def initialize
+		@controller = TwitterController.new
+	end
+	
+	def has_error?
+		return @error != nil
+	end
+	
+	def reset_error
+		@error = nil
+	end
+	
+	def get_trends
+		text = ""
+		request = @controller.get_trends
+		if request.is_success?
+			trends = request.response
+			trends["trends"].each do |hour, hour_trends|
+				text += "Top 20 de trends para la fecha #{hour} \n"
+				i = 1
+				@trend_list = hour_trends
+				hour_trends.each do |t|
+					text += "#{i}.  " + t["name"] + "\n"
+					i += 1
+				end
+				break #solo los de una hora
+			end 
+			reset_error 
+		else
+			@error = true
+			text = request.error_message
+		end
+		return text
+	end
+	
+	def drill_down_trend(number)
+		number = number.to_i
+		if number > 0 and number <= @trend_list.size
+			return get_twits_for_trend(@trend_list[number-1]["name"])
+		else
+			fail
+		end
+	end
+	
+	def get_twits_for_trend(trend)
+		text = ""
+		request = @controller.get_twits_for_trend(trend)
+		i = 1
+		if request.is_success?
+			@current_trend_twits = request.response["results"]
+			@current_trend_twits.each do |twit|
+				text += "#{i}. El #{twit['created_at']} #{twit['from_user']} dijo: \n"
+				text += TwitterFormatter.linkify(twit['text'])
+				text += "\n\n"
+				i += 1
+			end
+			reset_error
+		else
+			@error = true
+			text += request.error_message
+		end
+		return text
+	end
+	
+	def drill_down_user(number)
+		number = number.to_i
+		if number > 0 and number <= @current_trend_twits.size
+			return get_user_information_by_id(@current_trend_twits[number-1]["from_user_id"])
+		else
+			fail
+		end 
+	end
 
-def show_menu
-	p "Para realizar una accion teclea el numero a su izquierda seguido de un enter"
-	p "1. Obtener trends del momento"
-	p "2. Obtener los twits para un trend"
-	p "3. Obtener los datos de un usuario"
-	p "4. Mostrar menu de acciones"
-	p "5. Salir"
+	def get_user_information_by_id(id)
+		text = ""
+		request = @controller.get_user_information_by_id(id)
+		if request.is_success?
+			user = request.response[0]		
+			text += "Nombre de usuario: #{user['screen_name']}\n"
+			text += "Nombre: #{user['name']}\n"
+			text += "Descripcion: " + TwitterFormatter.linkify(user['description']) + "\n"
+			text += "Imagen: #{user['profile_image_url']}\n"
+			reset_error
+		else
+			@error = true
+			text += request.error_message
+		end
+		return text
+	end
 end
-
-p "Petirrojo, un pequeno cliente para twitter"
-p "-----------------------------------------------------------------------------"
-show_menu
-
-#p controller.get_trends
-
-#p controller.get_twits_for_trend("moyano")

@@ -31,7 +31,7 @@ class TwitterRestClient
 	def check_string_argument(value)
 		raise TwitterRestClientArgumentException, "La palabra elegida no debe ser vacia" if value.to_s.strip == ""
 	end
-	
+		
 	##
 	# Intenta obtener informacion de una url dada y sus parametros
 	# Si la respuesta es satisfactoria retorna una respuesta en forma de array o hash
