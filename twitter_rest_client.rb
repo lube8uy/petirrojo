@@ -59,18 +59,18 @@ end
 class TwitterRestClientException < StandardError
 
 	attr_reader :code
-	
-  def initialize(code)
-    @code = code
-  end
-  
-  def not_found?
-  	@code == "404"
-  end
-  
-  def server_error?
-  	!@code.to_s[/\A5/].nil?
-  end
+
+	def initialize(code)
+		@code = code
+	end
+
+	def not_found?
+		@code == "404"
+	end
+
+	def server_error?
+		!@code.to_s[/\A5/].nil?
+	end
   
 end
 

@@ -41,19 +41,19 @@ class TwitterControllerResponse
 	attr_reader :response
 	attr_reader :ex
 	attr_reader :error_message
-			
+
 	def initialize(response, ex = nil)
-      @response = response
-      @ex = ex     
-      set_error_message
-  end
-    
+		@response = response
+		@ex = ex     
+		set_error_message
+	end
+
 	def is_success?
 		@ex.nil?
 	end
-	
+
 	private
-	
+
 	def set_error_message
 		#En una situacion real los mensajes de respuesta serian tags a traducir en la vista
 		if @ex.is_a?(TwitterRestClientException)
@@ -68,4 +68,5 @@ class TwitterControllerResponse
 			@response = ex.message
 		end
 	end
+	
 end
