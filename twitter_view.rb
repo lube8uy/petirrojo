@@ -40,12 +40,13 @@ class TwitterView
 			@error = true
 			text = request.error_message
 		end
+		return text
 	end
 	
 	def drill_down_trend(number)
 		number = number.to_i
 		if number > 0 and number <= @trend_list.size
-			get_twits_for_trend(@trend_list[number-1]["name"])
+			return get_twits_for_trend(@trend_list[number-1]["name"])
 		else
 			fail
 		end
@@ -69,12 +70,13 @@ class TwitterView
 			@error = true
 			text += request.error_message
 		end
+		return text
 	end
 	
 	def drill_down_user(number)
 		number = number.to_i
 		if number > 0 and number <= @current_trend_twits.size
-			get_user_information_by_id(@current_trend_twits[number-1]["from_user_id"])
+			return get_user_information_by_id(@current_trend_twits[number-1]["from_user_id"])
 		else
 			fail
 		end 
@@ -94,5 +96,6 @@ class TwitterView
 			@error = true
 			text += request.error_message
 		end
+		return text
 	end
 end

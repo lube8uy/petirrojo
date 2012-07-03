@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/twitter_main_view.rb')
+require_relative 'twitter_view.rb'
 
 print "Petirrojo, un pequeno cliente para twitter, bienvenido \n"
 print "Para salir de cualquier opcion o del programa escribe 'exit' \n\n"

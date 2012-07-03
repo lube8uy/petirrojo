@@ -1,5 +1,5 @@
-require File.expand_path(File.dirname(__FILE__) + '/edgecase')
-require File.expand_path(File.dirname(__FILE__) + '/../twitter_rest_client.rb')
+require_relative 'edgecase'
+require_relative '../twitter_rest_client.rb'
 
 class TestTwitterRestClient < EdgeCase::Koan
 

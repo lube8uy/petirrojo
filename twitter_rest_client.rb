@@ -4,23 +4,25 @@ require 'json'
 class TwitterRestClient
 
 	def get_trends
-		return get('http://api.twitter.com/1/trends/daily.json')
+		get('http://api.twitter.com/1/trends/daily.json')
 	end
 	
 	def get_twits_for_trend(trend)
 		check_string_argument(trend)
-		return get('http://search.twitter.com/search.json', {'q' => trend.to_s.strip})
+		get('http://search.twitter.com/search.json', {'q' => trend.to_s.strip})
 	end
 	
 	def get_twit_by_id(id)
 		check_id_argument(id)
-		return get("http://api.twitter.com/1/statuses/show/#{id.to_s.strip}.json")
+		get("http://api.twitter.com/1/statuses/show/#{id.to_s.strip}.json")
 	end
 	
 	def get_user_information_by_id(id)
 		check_id_argument(id)
-		return get('http://api.twitter.com/1/users/lookup.json', {'user_id' => id.to_s.strip})
+		get('http://api.twitter.com/1/users/lookup.json', {'user_id' => id.to_s.strip})
 	end
+	
+	private
 	
 	def check_id_argument(id)
 		id = id.to_s.strip
@@ -43,7 +45,7 @@ class TwitterRestClient
 		res = Net::HTTP.get_response(uri)
 		if res.is_a?(Net::HTTPSuccess)
 			response = res.body
-			return JSON.parse(response)
+			JSON.parse(response)
 		else 
 			raise TwitterRestClientException.new(res.code), "#{res.code}: #{res.message}"
 		end
@@ -56,18 +58,18 @@ end
 ##
 class TwitterRestClientException < StandardError
 
-	attr :code
+	attr_reader :code
 	
   def initialize(code)
     @code = code
   end
   
   def not_found?
-  	return @code == "404"
+  	@code == "404"
   end
   
   def server_error?
-  	return !@code.to_s[/\A5/].nil?
+  	!@code.to_s[/\A5/].nil?
   end
   
 end

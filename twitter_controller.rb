@@ -2,25 +2,27 @@
 # Controlador de operaciones sobre twitter
 ##
 
-require File.expand_path(File.dirname(__FILE__) + '/twitter_rest_client.rb')
+require_relative 'twitter_rest_client.rb'
 
 class TwitterController
 
 	def get_trends
-		return ask_rest_client(__method__)
+		ask_rest_client(__method__)
 	end
 	
 	def get_twits_for_trend(trend)	
-		return ask_rest_client(__method__, trend)
+		ask_rest_client(__method__, trend)
 	end
 	
 	def get_twit_by_id(id)
-		return ask_rest_client(__method__, id)		
+		ask_rest_client(__method__, id)		
 	end
 	
 	def get_user_information_by_id(id)
-		return ask_rest_client(__method__, id)
+		ask_rest_client(__method__, id)
 	end
+	
+	private
 	
 	def ask_rest_client(method, *params)
 		begin
@@ -29,30 +31,28 @@ class TwitterController
 			response = TwitterControllerResponse.new(result)
 		rescue Exception => ex
 			response = TwitterControllerResponse.new(nil, ex)
-		end		
-		return response		
+		end	
 	end
 		
 end
 
 class TwitterControllerResponse
 
-	attr_reader :ok
-	attr_reader :error_message
 	attr_reader :response
-	
-	attr :ex
-	
+	attr_reader :ex
+	attr_reader :error_message
+			
 	def initialize(response, ex = nil)
-      @ok = ex == nil
-      @ex = ex
       @response = response
-      set_error_message if ex != nil
+      @ex = ex     
+      set_error_message
   end
     
 	def is_success?
-		return @ok
+		@ex.nil?
 	end
+	
+	private
 	
 	def set_error_message
 		#En una situacion real los mensajes de respuesta serian tags a traducir en la vista
@@ -64,7 +64,7 @@ class TwitterControllerResponse
 			else
 				@response = @ex.message
 			end
-		else
+		elsif !is_success?
 			@response = ex.message
 		end
 	end

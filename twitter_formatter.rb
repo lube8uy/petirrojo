@@ -16,7 +16,6 @@
       text = text.gsub(/^(#[\S]*)/){"<a href='http://search.twitter.com/search.json?q=" + CGI::escape($1) + "'>#{$1}</a>"}
       #terminos de busqueda en el medio del texto
       text = text.gsub(/(\s+)(#[\S]*)/){$1 + "<a href='http://search.twitter.com/search.json?q=" + CGI::escape($2) + "'>#{$2}</a>"}
-      return text;
     end
     
   end
